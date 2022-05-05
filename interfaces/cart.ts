@@ -1,4 +1,4 @@
-import { ISize } from "./";
+import { ISize } from './';
 
 export interface ICartProduct {
     _id: string;
@@ -10,4 +10,3 @@ export interface ICartProduct {
     gender: 'men'|'women'|'kid'|'unisex';
     quantity: number;
 }
-

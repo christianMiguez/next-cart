@@ -1,6 +1,6 @@
 import NextLink from 'next/link'
 import { Box, Link, Button, Card, CardContent, Divider, Grid, Typography, Chip } from "@mui/material"
-import { CardList } from "../../components/cart/CardList"
+import { CartList } from "../../components/cart/CartList"
 import OrderSummary from "../../components/cart/OrderSummary"
 import { ShopLayout } from "../../components/layouts/ShopLayout"
 import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material'
@@ -29,7 +29,7 @@ const OrderPage = () => {
         <Grid container>
             <Grid item xs={12} sm={7}>
                 {/* Cart list */}
-                <CardList editable={false}/>
+                <CartList editable={false}/>
                 
             </Grid>
 
