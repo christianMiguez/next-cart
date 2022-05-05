@@ -7,6 +7,7 @@ interface Props {
   maxValue: number;
 
   // methods
+  // the following function: 
   updatedQuantity: (newValue: number) => void
 }
 
