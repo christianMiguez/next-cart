@@ -9,7 +9,7 @@ interface Props {
     // methods
     onSelectedSize: (size: ISize) => void
 }
-const SizeSelector:FC<Props> = ({selectedSize, sizes, onSelectedSize}) => {
+export const SizeSelector:FC<Props> = ({selectedSize, sizes, onSelectedSize}) => {
   return (
     <Box>
         {
@@ -28,5 +28,3 @@ const SizeSelector:FC<Props> = ({selectedSize, sizes, onSelectedSize}) => {
     </Box>
   )
 }
-
-export default SizeSelector
