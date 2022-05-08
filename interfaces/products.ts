@@ -1,5 +1,6 @@
 // an interface is a contract that defines the shape of an object
 export interface IProduct {
+    _id: string;
     description: string;
     images: string[];
     inStock: number;
