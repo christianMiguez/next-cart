@@ -19,6 +19,10 @@ export const isValidToken = (token: string):Promise<string> => {
         throw new Error('JWT_SECRET env variable is not defined')
     }
 
+    if (token.length <= 10) {
+        return Promise.reject('Token is not valid')
+    }
+
     return new Promise((resolve, reject) => {
 
         try {

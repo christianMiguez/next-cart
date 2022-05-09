@@ -6,7 +6,6 @@ import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/mater
 import { useForm } from 'react-hook-form'
 import AuthLayout from '../../components/layouts/AuthLayout'
 import { validations } from '../../utils'
-import tesloAPI from '../../api/tesloApi'
 import { ErrorOutline } from '@mui/icons-material'
 import { useRouter } from 'next/router'
 
@@ -37,9 +36,9 @@ const LoginPage = () => {
             return;
         }
 
-        router.replace('/')
+        const destination = router.query.goto?.toString() || '/'
+        router.replace(destination)
 
-        
     }
     
   return (
@@ -86,7 +85,7 @@ const LoginPage = () => {
                 </Grid>
 
                 <Grid item xs={12} display="flex" justifyContent="end">
-                    <NextLink href="/auth/register" passHref>
+                    <NextLink href={router.query.goto ? `/auth/register?goto=${router.query.goto}` : `/auth/register` } passHref>
                         <Link underline="always">
                             ¿No tienes cuenta?
                         </Link>
