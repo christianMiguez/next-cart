@@ -32,10 +32,11 @@ export default function Handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
 const registerUser = async(req: NextApiRequest, res: NextApiResponse<Data>) => {
 
-    const { email = '', password = '', name = '' } = req.body as { email: string, password: string, name: string }
-    
-    
-    if (password.length < 6) {
+    const { name = '', email = '', password = '' } = req.body as { name: string, email: string, password: string }
+
+    console.log({ name, email, password })
+        
+    if (password.length < 5) {
         return res.status(400).json({
             message: 'Password must be at least 6 characters'
         })

@@ -1,89 +1,162 @@
-import NextLink from 'next/link'
-import { Box, Link, Button, Card, CardContent, Divider, Grid, Typography, Chip } from "@mui/material"
-import { CartList } from "../../components/cart/CartList"
-import OrderSummary from "../../components/cart/OrderSummary"
-import { ShopLayout } from "../../components/layouts/ShopLayout"
-import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material'
+import NextLink from 'next/link';
+import { GetServerSideProps, NextPage } from 'next';
+import { getSession } from 'next-auth/react';
 
-const OrderPage = () => {
+import { Link, Box, Card, CardContent, Divider, Grid, Typography, Chip } from '@mui/material';
+import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
+
+import { ShopLayout } from '../../components/layouts/ShopLayout';
+import { CartList, OrderSummary } from '../../components/cart';
+import { dbOrders } from '../../database';
+import { IOrder } from '../../interfaces';
+
+
+interface Props {
+    order: IOrder;
+}
+
+const OrderPage: NextPage<Props> = ({ order }) => {
+
+
+    const { shippingAddress } = order;
+
+
   return (
-    <ShopLayout title="Resumen de la orden #5567989" pageDescription="Resumen del pedido">
-        <Typography variant="h1" component='h1'>Orden: 5567989 </Typography>
+    <ShopLayout title='Resumen de la orden' pageDescription={'Resumen de la orden'}>
+        <Typography variant='h1' component='h1'>Orden: { order._id }</Typography>
 
-        {/* <Chip
-            sx={{my:2}}
-            variant="outlined"
-            color="error"
-            label="Pendiente de pago"
-            icon={<CreditCardOffOutlined/>}
-        /> */}
+        {
+            order.isPaid
+            ? (
+                <Chip 
+                    sx={{ my: 2 }}
+                    label="Orden ya fue pagada"
+                    variant='outlined'
+                    color="success"
+                    icon={ <CreditScoreOutlined /> }
+                />
+            ):
+            (
+                <Chip 
+                    sx={{ my: 2 }}
+                    label="Pendiente de pago"
+                    variant='outlined'
+                    color="error"
+                    icon={ <CreditCardOffOutlined /> }
+                />
+            )
+        }
 
-        <Chip
-            sx={{my:2}}
-            variant="outlined"
-            color="success"
-            label="Pagada"
-            icon={<CreditScoreOutlined/>}
-        />
+        
 
-        <Grid container>
-            <Grid item xs={12} sm={7}>
-                {/* Cart list */}
-                <CartList editable={false}/>
-                
+        <Grid container className='fadeIn'>
+            <Grid item xs={ 12 } sm={ 7 }>
+                <CartList products={  order.orderItems } />
             </Grid>
-
-            <Grid item xs={12} sm={5}>
-                {/* Cart list */}
-                <Card className="summary-card">
+            <Grid item xs={ 12 } sm={ 5 }>
+                <Card className='summary-card'>
                     <CardContent>
-                        <Typography variant="h6" component="h6">Resumen (3 productos)</Typography>
+                        <Typography variant='h2'>Resumen ({ order.numberOfItems } { order.numberOfItems > 1 ? 'productos': 'producto'})</Typography>
+                        <Divider sx={{ my:1 }} />
 
-                        <Divider sx={{mt:1}}/>
-
-                        <Box display="flex" justifyContent="end" sx={{mt:2}}>
-                            <NextLink href="/checkout/address" passHref>
-                                <Link underline='always'>
-                                Editar dirección
-                                </Link>
-                            </NextLink>
+                        <Box display='flex' justifyContent='space-between'>
+                            <Typography variant='subtitle1'>Dirección de entrega</Typography>
                         </Box>
 
-                        <Typography variant="subtitle1">Dirección de envío</Typography>
-                        <Typography>Christian Miguez</Typography>
-                        <Typography>Barcelona 1879 esq. Bogota</Typography>
-                        <Typography>Montevideo, Villa del Cerro</Typography>
-                        <Typography>Uruguay</Typography>
-                        <Typography>092646464</Typography>
+                        
+                        <Typography>{ shippingAddress.firstName } { shippingAddress.lastName }</Typography>
+                        <Typography>{ shippingAddress.address } { shippingAddress.address2 ? `, ${ shippingAddress.address2 }`: '' }</Typography>
+                        <Typography>{ shippingAddress.city }, { shippingAddress.zip }</Typography>
+                        <Typography>{ shippingAddress.country }</Typography>
+                        <Typography>{ shippingAddress.phone }</Typography>
 
-                        <Divider sx={{my:2}}/>
+                        <Divider sx={{ my:1 }} />
 
-                        <Box display="flex" justifyContent="end" sx={{mt:2}}>
-                            <NextLink href="/cart" passHref>
-                                <Link underline='always'>
-                                Editar
-                                </Link>
-                            </NextLink>
+
+                        <OrderSummary 
+                            orderValues={{
+                                numberOfItems: order.numberOfItems,
+                                subTotal: order.subTotal,
+                                total: order.total,
+                                tax: order.tax,
+                            }} 
+                        />
+
+                        <Box sx={{ mt: 3 }} display="flex" flexDirection='column'>
+                            {/* TODO */}
+                            {
+                                order.isPaid
+                                ? (
+                                    <Chip 
+                                        sx={{ my: 2 }}
+                                        label="Orden ya fue pagada"
+                                        variant='outlined'
+                                        color="success"
+                                        icon={ <CreditScoreOutlined /> }
+                                    />
+
+                                ):(
+                                    <h1>Pagar</h1>
+                                )
+                            }
+
                         </Box>
 
-                        <OrderSummary />
-
-                        <Box sx={{mt:3}}>
-                            { /* TODO:  */}
-                            <Chip
-                                sx={{my:2}}
-                                variant="outlined"
-                                color="success"
-                                label="Pagada"
-                                icon={<CreditScoreOutlined/>}
-                            />
-                        </Box>
                     </CardContent>
                 </Card>
             </Grid>
         </Grid>
+
+
     </ShopLayout>
   )
 }
 
-export default OrderPage
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+    
+    const { id = '' } = query;
+    const session:any = await getSession({ req });
+
+    if ( !session ) {
+        return {
+            redirect: {
+                destination: `/auth/login?p=/orders/${ id }`,
+                permanent: false,
+            }
+        }
+    }
+
+    const order = await dbOrders.getOrderById( id.toString() );
+
+    if ( !order ) {
+        return {
+            redirect: {
+                destination: '/orders/history',
+                permanent: false,
+            }
+        }
+    }
+
+    if ( order.user !== session.user._id ) {
+        return {
+            redirect: {
+                destination: '/orders/history',
+                permanent: false,
+            }
+        }
+    }
+
+
+    return {
+        props: {
+            order
+        }
+    }
+}
+
+
+export default OrderPage;

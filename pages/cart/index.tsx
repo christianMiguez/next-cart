@@ -1,8 +1,7 @@
+import { useContext, useEffect } from "react"
 import { Box, Button, Card, CardContent, Divider, Grid, Typography } from "@mui/material"
 import { useRouter } from "next/router"
-import { useContext, useEffect } from "react"
-import { CartList } from "../../components/cart/CartList"
-import OrderSummary from "../../components/cart/OrderSummary"
+import {OrderSummary, CartList} from "../../components/cart"
 import { ShopLayout } from "../../components/layouts/ShopLayout"
 import { CartContext } from "../../context"
 
