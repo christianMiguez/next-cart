@@ -1,1 +1,1 @@
-export { default as tesloAPI } from './tesloApi';
+export { default as tesloAPI } from './tesloAPI';

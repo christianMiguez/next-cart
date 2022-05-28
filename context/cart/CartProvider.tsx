@@ -2,7 +2,7 @@ import {FC, useReducer, useEffect} from 'react';
 import Cookie from 'js-cookie';
 import {ICartProduct, IOrder, ShippingAddress} from '../../interfaces';
 import {CartContext, cartReducer} from './';
-import tesloApi from '../../api/tesloApi';
+import tesloAPI from '../../api/tesloAPI';
 import axios from 'axios';
 
 interface Props {
@@ -160,7 +160,7 @@ export const CartProvider: FC<Props> = ({children}) => {
         }
 
         try {
-            const { data } = await tesloApi.post<IOrder>('/orders', body);
+            const { data } = await tesloAPI.post<IOrder>('/orders', body);
             TODO: dispatch({type: '[Cart] - Order Complete'})
             return {
                 hasError: false, 
