@@ -1,11 +1,11 @@
-import { CategoryOutlined } from '@mui/icons-material'
-import { CardMedia, Grid, Link } from '@mui/material'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import NextLink from 'next/link';
+import { AddOutlined, CategoryOutlined } from '@mui/icons-material';
+import { Box, Button, CardMedia, Grid, Link } from '@mui/material'
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import useSWR from 'swr';
 
 import { AdminLayout } from '../../components/layouts'
-import { IOrder, IProduct, IUser } from '../../interfaces';
+import { IProduct } from '../../interfaces';
 
 
 const columns: GridColDef[] = [
@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
                         component='img'
                         alt={row.title}
                         className='fadeIn'
-                        image={`/products/${row.img}`}
+                        image={row.img}
                     />
                 </a>
             )
@@ -27,7 +27,7 @@ const columns: GridColDef[] = [
     },
     {
         field: 'title',
-        headerName: 'Titulo',
+        headerName: 'Title',
         width: 250,
         renderCell: ({ row }: GridValueGetterParams) => {
             return (
@@ -41,10 +41,13 @@ const columns: GridColDef[] = [
     },
     { field: 'gender', headerName: 'Género' },
     { field: 'type', headerName: 'Tipo' },
-    { field: 'inStock', headerName: 'Stock' },
+    { field: 'inStock', headerName: 'Inventario' },
     { field: 'price', headerName: 'Precio' },
-    { field: 'sizes', headerName: 'Tallas' },
+    { field: 'sizes', headerName: 'Tallas', width: 250 },
+
 ];
+
+
 
 const ProductsPage = () => {
 
@@ -61,16 +64,26 @@ const ProductsPage = () => {
         inStock: product.inStock,
         price: product.price,
         sizes: product.sizes.join(', '),
-        slug: product.slug
+        slug: product.slug,
     }));
 
 
     return (
         <AdminLayout
             title={`Productos (${data?.length})`}
-            subTitle={'Mantenimiento de products'}
+            subTitle={'Mantenimiento de productos'}
             icon={<CategoryOutlined />}
         >
+            <Box display='flex' justifyContent='end' sx={{ mb: 2 }}>
+                <Button
+                    startIcon={<AddOutlined />}
+                    color="secondary"
+                    href="/admin/products/new"
+                >
+                    Crear producto
+                </Button>
+            </Box>
+
             <Grid container className='fadeIn'>
                 <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
                     <DataGrid
@@ -87,4 +100,4 @@ const ProductsPage = () => {
     )
 }
 
-export default ProductsPage
+export default ProductsPage;

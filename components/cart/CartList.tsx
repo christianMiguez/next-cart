@@ -1,85 +1,87 @@
-import { FC, useContext } from "react"
-import NextLink from 'next/link'
-import { Box, Button, Card, CardActionArea, CardMedia, Grid, Link, Typography } from "@mui/material"
-import ItemCounter from "../ui/ItemCounter"
-import { CartContext } from "../../context"
-import { ICartProduct, IOrderItem } from "../../interfaces"
+import { FC, useContext } from 'react';
+import NextLink from 'next/link';
+import { Box, Button, CardActionArea, CardMedia, Grid, Link, Typography } from '@mui/material';
+
+import { ItemCounter } from '../ui';
+import { CartContext } from '../../context';
+import { ICartProduct, IOrderItem } from '../../interfaces';
+
 
 interface Props {
     editable?: boolean;
-    products?: IOrderItem[]
+    products?: IOrderItem[];
 }
 
-export const CartList:FC<Props> = ({editable = false, products}) => {
+export const CartList: FC<Props> = ({ editable = false, products }) => {
 
-    const {cart, updateCartQuantity, removeProductFromCart} = useContext(CartContext)
+    const { cart, updateCartQuantity, removeProductFromCart } = useContext(CartContext);
 
-    const onNewsCartQuantityValue = (product: ICartProduct, newQuantityValue: number) => {
-        product.quantity = newQuantityValue
-        updateCartQuantity(product)
+    const onNewCartQuantityValue = (product: ICartProduct, newQuantityValue: number) => {
+        product.quantity = newQuantityValue;
+        updateCartQuantity(product);
     }
 
-    const productsToShow = products ? products : cart
+    const productsToShow = products ? products : cart;
 
-  return (
-    <>
-        {
-            productsToShow.map(product => (
-                <Grid container spacing={2} key={product.slug + product.size} sx={{mt: 2}} component="div">
-                    <Grid item xs={3} component="div">
-                        <Box>
-                            <NextLink href={`/product/${product.slug}/`} passHref>
+
+    return (
+        <>
+            {
+                productsToShow.map(product => (
+                    <Grid container spacing={2} key={product.slug + product.size} sx={{ mb: 1 }}>
+                        <Grid item xs={3}>
+                            {/* TODO: llevar a la página del producto */}
+                            <NextLink href={`/product/${product.slug}`} passHref>
                                 <Link>
-                                    <Card>
-                                        <CardActionArea>
-                                            <CardMedia
-                                                image={`/products/${product.image}`}
-                                                component='img'
-                                                sx={{borderRadius: '5px'}}
-                                            >
-                                            </CardMedia>
-                                        </CardActionArea>
-                                    </Card>
+                                    <CardActionArea>
+                                        <CardMedia
+                                            image={product.image}
+                                            component='img'
+                                            sx={{ borderRadius: '5px' }}
+                                        />
+                                    </CardActionArea>
                                 </Link>
                             </NextLink>
-                        </Box>
-                    </Grid>
+                        </Grid>
+                        <Grid item xs={7}>
+                            <Box display='flex' flexDirection='column'>
+                                <Typography variant='body1'>{product.title}</Typography>
+                                <Typography variant='body1'>Talla: <strong>{product.size}</strong></Typography>
 
-                    <Grid item xs={7} component="div">
-                        <Box display="flex" flexDirection="column">
-                            <Typography fontWeight={500}>{product.title}</Typography>
-                            <Typography variant="body1">Talle: <strong>{product.size}</strong></Typography>
-
-                            {
-                                    editable 
-                                    ? (
-                                        <ItemCounter 
-                                            currentValue={ product.quantity }
-                                            maxValue={ 10 } 
-                                            updatedQuantity={ ( value ) => onNewsCartQuantityValue(product as ICartProduct, value )}
-                                        />
-                                    )
-                                    : (
-                                        <Typography variant='h5'>{ product.quantity } { product.quantity > 1 ? 'productos':'producto' }</Typography>
-                                    )
+                                {
+                                    editable
+                                        ? (
+                                            <ItemCounter
+                                                currentValue={product.quantity}
+                                                maxValue={10}
+                                                updatedQuantity={(value) => onNewCartQuantityValue(product as ICartProduct, value)}
+                                            />
+                                        )
+                                        : (
+                                            <Typography variant='h5'>{product.quantity} {product.quantity > 1 ? 'productos' : 'producto'}</Typography>
+                                        )
                                 }
-                        </Box>
-                    </Grid>
 
-                    <Grid item xs={2} display="flex" alignItems="center" flexDirection="column" component="div">
-                        <Box>
-                            <Typography variant="subtitle1">$ {product.price}</Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={2} display='flex' alignItems='center' flexDirection='column'>
+                            <Typography variant='subtitle1'>{`$${product.price}`}</Typography>
+
                             {
-                                editable &&
-                                <Button variant="text" color="secondary" onClick={() => removeProductFromCart(product as ICartProduct)}>
-                                    Eliminar
-                                </Button>
-                        }
-                        </Box>
+                                editable && (
+                                    <Button
+                                        variant='text'
+                                        color='secondary'
+                                        onClick={() => removeProductFromCart(product as ICartProduct)}
+                                    >
+                                        Remover
+                                    </Button>
+                                )
+                            }
+                        </Grid>
                     </Grid>
-                </Grid>
-            ))
-        }
-    </>
-  )
+                ))
+            }
+        </>
+    )
 }

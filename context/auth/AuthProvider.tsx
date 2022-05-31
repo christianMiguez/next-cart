@@ -1,11 +1,11 @@
-import {FC, useEffect, useReducer} from 'react';
+import { FC, useEffect, useReducer } from 'react';
 import { useRouter } from 'next/router';
-import { useSession, signOut} from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 
 import Cookies from 'js-cookie';
 import axios from 'axios'
 import { tesloAPI } from '../../api';
-import {IUser} from '../../interfaces';
+import { IUser } from '../../interfaces';
 import { AuthContext, authReducer } from './';
 
 interface Props {
@@ -22,7 +22,7 @@ const AUTH_INITIAL_STATE: AuthState = {
     user: undefined
 };
 
-export const AuthProvider: FC<Props> = ({children}) => {
+export const AuthProvider: FC<Props> = ({ children }) => {
 
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
     const router = useRouter();
@@ -31,7 +31,7 @@ export const AuthProvider: FC<Props> = ({children}) => {
 
     useEffect(() => {
         if (status === 'authenticated') {
-            console.log({user: data?.user})
+            console.log({ user: data?.user })
             dispatch({ type: '[Auth] Login', payload: data?.user as IUser });
         }
 
@@ -40,16 +40,16 @@ export const AuthProvider: FC<Props> = ({children}) => {
     // useEffect(() => {
     //     checkToken()
     // }, []);
-    
+
     const checkToken = async () => {
 
         if (!Cookies.get('token')) return
 
         try {
-            const {data} = await tesloAPI.get('/user/validate-token')
-            const {token, user} = data;
+            const { data } = await tesloAPI.get('/user/validate-token')
+            const { token, user } = data;
             Cookies.set('token', token);
-            dispatch({type: '[Auth] Login', payload: user});
+            dispatch({ type: '[Auth] Login', payload: user });
             return true
         } catch (error) {
             Cookies.remove('token');
@@ -57,30 +57,30 @@ export const AuthProvider: FC<Props> = ({children}) => {
         }
     }
 
-    const loginUser = async(email: string, password: string):Promise<boolean> => {
+    const loginUser = async (email: string, password: string): Promise<boolean> => {
         try {
-            const {data} = await tesloAPI.post('/user/login', {email, password})
-            const {token, user} = data;
+            const { data } = await tesloAPI.post('/user/login', { email, password })
+            const { token, user } = data;
             Cookies.set('token', token);
-            dispatch({type: '[Auth] Login', payload: user});
+            dispatch({ type: '[Auth] Login', payload: user });
             return true
         } catch (error) {
             return false
         }
     }
 
-    const registerUser = async(name: string, email: string, password: string):  Promise<{hasError: boolean, message?: string}> => {
+    const registerUser = async (name: string, email: string, password: string): Promise<{ hasError: boolean, message?: string }> => {
         try {
-            const {data} = await tesloAPI.post('/user/register', {name, email, password})
-            const {token, user} = data;
+            const { data } = await tesloAPI.post('/user/register', { name, email, password })
+            const { token, user } = data;
             Cookies.set('token', token);
-            dispatch({type: '[Auth] Login', payload: user});
+            dispatch({ type: '[Auth] Login', payload: user });
             return {
                 hasError: false,
                 message: 'Todo ok'
             }
         } catch (error) {
-            if ( axios.isAxiosError(error) ) {
+            if (axios.isAxiosError(error)) {
                 return {
                     hasError: true,
                     message: error.message,
@@ -122,7 +122,7 @@ export const AuthProvider: FC<Props> = ({children}) => {
             logout,
         }}>
 
-        {children}
-    </AuthContext.Provider>
-    ); 
+            {children}
+        </AuthContext.Provider>
+    );
 }
