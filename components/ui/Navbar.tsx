@@ -39,13 +39,13 @@ export const Navbar = () => {
       <Toolbar>
         <NextLink href="/" passHref>
           <Link display="flex" alignItems="center">
-            <Typography variant="h6">X </Typography>
+            <Typography variant="h6">Teslo</Typography>
             <Typography
               sx={{
                 ml: 0.9,
               }}
             >
-              Store
+              Shop
             </Typography>
           </Link>
         </NextLink>
